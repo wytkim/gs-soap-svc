@@ -6,8 +6,8 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import com.smband.countries.GetCountryRequest;
-import com.smband.countries.GetCountryResponse;
+import com.smband.soap.model.GetCountryRequest;
+import com.smband.soap.model.GetCountryResponse;
 import com.smband.soap.repo.CountryRepository;
 
 @Endpoint

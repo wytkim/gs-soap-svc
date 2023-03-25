@@ -17,6 +17,12 @@ configurations {
 	jaxb
 }
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
@@ -25,9 +31,14 @@ dependencies {
 	jaxb("org.glassfish.jaxb:jaxb-xjc")
 	
 	
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-
+/*
 sourceSets {
 	main {
 		java {
@@ -35,13 +46,8 @@ sourceSets {
 			srcDir 'build/generated-sources/jaxb'
 		}
 	}
-	
-	test {
-		resources {
-			srcDir 'src/test/resources'
-		}
-	}
 }
+*/
 
 
 bootJar {
@@ -52,11 +58,12 @@ bootJar {
 task genJaxb {
 	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
 	ext.schema = "src/main/resources/countries.xsd"
-	ext.defaultLocale = Locale.getDefault();
+	//ext.defaultLocale = Locale.getDefault();
 	
 	outputs.dir sourcesDir
 	
 	doLast() {
+		Locale defaultLocale = Locale.getDefault();
 		Locale.setDefault(Locale.US);
 		project.ant {
 			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask", classpath: configurations.jaxb.asPath
@@ -64,16 +71,28 @@ task genJaxb {
 			
 			xjc(destdir: sourcesDir, schema: schema) {
 				arg(value: "-wsdl")
+				arg(value: "-p")
+				arg(value: "com.smband.soap.model")
+				
 				//arg(value: "-encoding utf-8")
 				produces(dir: sourcesDir, includes: "**/*.java")
 			}
 			
 		}
 		Locale.setDefault(defaultLocale)
+		//tasks.copySoapJava.execute()
 	}
 }
 
-compileJava.dependsOn genJaxb
+// jaxb로 생성된 java 파일 프로젝트에 추가하기.
+tasks.register('copySoapJava', Copy) {
+	dependsOn genJaxb
+
+	from "${buildDir}/generated-sources/jaxb"
+	into 'src/main/java'
+}
+
+compileJava.dependsOn copySoapJava
 
 tasks.named('test') {
 	useJUnitPlatform()

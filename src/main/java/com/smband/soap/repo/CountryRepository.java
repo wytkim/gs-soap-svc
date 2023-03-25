@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.smband.countries.Country;
-import com.smband.countries.Currency;
+import com.smband.soap.model.Country;
+import com.smband.soap.model.Currency;
 
 import jakarta.annotation.PostConstruct;
 
