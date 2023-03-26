@@ -11,7 +11,9 @@ class GsSoapSvcApplicationTests {
 	@Test
 	void contextLoads() {
 		Locale.setDefault(Locale.US);
-		
+	
+		//org.springframework.boot.test.web.client.LocalHostUriTemplateHandler
+		//org.springframework.test.
 	}
 	
 
